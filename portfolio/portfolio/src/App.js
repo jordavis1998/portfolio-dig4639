@@ -4,6 +4,7 @@ import Menu from "./components/Menu";
 import React, { useEffect, useState } from 'react';
 function App() {
   const [displayCounter, setDisplayCounter] = useState(false);
+  const [displayTimer, setDisplayTimer] = useState(false);
   let menuData = [
     {
       menuName: "Appetizer",
@@ -151,6 +152,43 @@ function App() {
         }   
     }
 
+    class Timer extends React.Component {
+      // Declare a new state variable, which we'll call "count"
+      constructor(props) {
+        super(props)
+        this.state = { time: props.seconds, complete:false, interval: undefined }
+      }
+      
+      componentDidMount() {
+      this.setState({
+        interval: setInterval(()=>{
+        if(this.state.time > 0) {
+        this.setState({time: this.state.time - 1})}
+         else {
+          this.setState({complete: true})
+          clearInterval(this.state.interval)
+        }
+      }
+        , 1000)
+      })
+      }
+      render() {
+        let minutes = Math.floor(this.state.time / 60)
+        let seconds = this.state.time - minutes*60
+        return (
+          <div>
+            <h2>Time remaining</h2>
+            {!this.state.complete ?
+          <p>You have {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")} minutes left</p>
+          :
+          <p>Timer Done!</p>
+            }
+          <button onClick={() => this.setState({time: this.state.time = 1200})}>Reset</button>
+        </div>
+      );
+    }
+    }
+
 
   return (
     <div className="App">
@@ -162,6 +200,17 @@ function App() {
       :
       <button onClick={() => setDisplayCounter(true)}>
         Place Mobile Order
+      </button>
+        )
+      }
+      </p>
+      <p>
+      {
+        (displayTimer ?
+          <Timer seconds={1200}/>
+      :
+      <button onClick={() => setDisplayTimer(true)}>
+        Order Status
       </button>
         )
       }
